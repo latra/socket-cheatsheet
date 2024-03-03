@@ -2,7 +2,7 @@
 ### Creación del Socket
 >  https://linux.die.net/man/3/socket
 
-Crea y devuelve un descriptor de fichero que apunta a un socket con las características definidas
+Crea y devuelve un descriptor del socket que apunta a un socket con las características definidas
 
 `AF_INET` 		-> IPv4\
 `SOCK_DGRAM` 	-> Connectionless-mode\
