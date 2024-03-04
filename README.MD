@@ -2,20 +2,28 @@
 ### Creación del Socket
 >  https://linux.die.net/man/3/socket
 
-Crea y devuelve un descriptor del socket que apunta a un socket con las características definidas
+Crea y devuelve un descriptor del socket que apunta a un socket con las características definidas.
+
+Estos son las constantes más habituales:
 
 `AF_INET` 		-> IPv4\
 `SOCK_DGRAM` 	-> Connectionless-mode\
 `SOCK_STREAM`	-> Connection-mode\
-`protocol`		-> 0 = default for type
 
 **C**
+```c
+       int socket(int domain, int type, int protocol);
+```
 ```c
 	int sock = socket(AF_INET, SOCK_DGRAM, 0);	// UDP
 	int sock = socket(AF_INTE, SOCK_STREAM, 0);	// TCP
 ```
+Indicando 0 como protocolo, asignará automáticamente el protocolo en función del tipo de socket (UDP en caso de ser un socket de Datagramas, TCP en caso de ser un socket de STREAM)
 
 **Python3**
+```python
+class socket.socket(family=AF_INET, type=SOCK_STREAM, proto=0, fileno=None)
+```
 ```python
     socket: socket.socket = socket.socket(
         family = socket.AF_INET, 
@@ -27,7 +35,11 @@ Crea y devuelve un descriptor del socket que apunta a un socket con las caracter
     )
 ```
 
+
 ### Struct de IPv4
+La información sobre las direcciones IPv4 a las que nos conectamos se almacena en estructuras donde definiremos la dirección y el puerto.
+- Podemos usar `0.0.0.0` como IP para indicar 'cualquier IP' (o `INADDR_ANY`)
+- Podemos usar `0` en lugar de especificar un puerto en caso que queramos que se utilice uno aleatorio (útil, por ejemplo, al definir que puerto utilizará el cliente).
 
 **C**
 ```c
@@ -42,7 +54,8 @@ Crea y devuelve un descriptor del socket que apunta a un socket con las caracter
 ```python
     addr = ('0.0.0.0', 0)
 ```
-### Bindear el socket
+### Vincular el socket
+Una vez creado el socket, debemos vincularlo a la interficie de nuestro equipo, indicando tanto la IP de la interficie como el puerto. 
 
 **C**
 ```c
@@ -55,6 +68,7 @@ Crea y devuelve un descriptor del socket que apunta a un socket con las caracter
 En el caso del cliente, no es estríctamente necesario, ya que al enviar datos a una dirección, si no estaba vinculado, se vinculará en ese momento automáticamente. Pero no hace daño ponerlo igualmente.
 
 ## UDP (Connectionless)
+
 ### Enviar datos
 
 **C**
@@ -64,7 +78,7 @@ En el caso del cliente, no es estríctamente necesario, ya que al enviar datos a
 ```
 **Python3**
 ```python
-    message : bytes = "".encode(encoding="utf-8")
+    message : bytes = "".encode(encoding="utf-8") # o encoding="ascii", para evitar complicarnos la vida al gestionarlo en C.
     socket.sendto(message, server_addr)
 ```
 ### Recibir datos
@@ -88,20 +102,23 @@ En el caso del cliente, no es estríctamente necesario, ya que al enviar datos a
 ## TCP (Connection)
 #TODO
 ### Conectar
-
+Realizado por el lado del cliente hacia la IP y puerto utilizada por el servidor
 **C**
 ```c
 ```
 **Python3**
 ```python
+socket.connect(("0.0.0.0", 8000))
 ```
 ### Escuchar y Aceptar conexiones
-
+Realizado por el servidor: coloca la interficie de conexión (_el socket_) en modo escucha, y acepta las peticiones en espera.
 **C**
 ```c
 ```
 **Python3**
 ```python
+socket.listen(1)
+connected_socket, client_info = server_socket.accept()
 ```
 
 ### Enviar datos
@@ -111,6 +128,8 @@ En el caso del cliente, no es estríctamente necesario, ya que al enviar datos a
 ```
 **Python3**
 ```python
+msg_to_send : bytes = "message".encode()
+socket.send(msg_to_send)
 ```
 ### Recibir datos
 
@@ -119,4 +138,5 @@ En el caso del cliente, no es estríctamente necesario, ya que al enviar datos a
 ```
 **Python3**
 ```python
+recv_buffer : bytes = socket.recv(1000)
 ```
