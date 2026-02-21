@@ -16,7 +16,7 @@ msg_to_send = ' '.join(sys.argv[1:])
 client_socket.bind(('0.0.0.0', 0))
 
 # Conectamos el canal al servidor
-client_socket.connect(("0.0.0.0", 8000))
+client_socket.connect(("localhost", 8000))
 
 # El cliente recibe un mensaje al conectarse
 server_response = client_socket.recv(1000)
